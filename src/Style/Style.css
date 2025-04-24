@@ -16,7 +16,7 @@ body{
 .background-image {
   position: relative;
   overflow: hidden;
-  background-image: url("/dist/assets/img/mainBackground.jpg");
+  background-image: url("/public/Img/mainBackground.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -37,7 +37,7 @@ body{
 /* navbar */
 .navbar-custom {
   overflow: hidden;
-  background-image: url("/dist/assets/img/mainBackground.jpg");
+  background-image: url("/public/Img/mainBackground.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -108,7 +108,7 @@ li.nav-item > a.nav-link:hover {
 
 /* Jumbotron */
 .jumbotron-bg {
-  background-image: url("/dist//assets//img/Jumbotronbg.jpg");
+  background-image: url("/public/Img/Jumbotronbg.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -135,7 +135,7 @@ h1#jumbo {
   font-weight: 100 !important;
   color: #fff;
 }
-
+ 
 /* Contet */
 .content-custom{
   margin-top: 56px;
