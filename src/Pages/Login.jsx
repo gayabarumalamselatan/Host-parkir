@@ -1,13 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AUTH_LOGIN_SERVICE } from "../Config/URLConstant";
 
 const LoginPage = () => {
   const [userName, setUserName] = useState("");
-  const [userPass, setUserPass] = useState("");
+  const [password, setpassword] = useState("");
   const navigate = useNavigate();
   // const [errMsg ,setErrMsg] = useState()
-  const login_url = "https://5z0e4.wiremockapi.cloud/auth-service/login";
 
   useEffect(() => {
     const isLoggedIn = sessionStorage.getItem("isLoggedIn") === "true";
@@ -21,8 +21,8 @@ const LoginPage = () => {
     try {
       // const requestData = {userName, password};
       const response = await axios.post(
-        login_url,
-        JSON.stringify({ userName, userPass }),
+        `${AUTH_LOGIN_SERVICE}`,
+        JSON.stringify({ userName, password }),
         // JSON.stringify({email, password}),
         // requestData,
         {
@@ -32,18 +32,19 @@ const LoginPage = () => {
       );
       if (response.status === 200) {
         sessionStorage.setItem("isLoggedIn", "true");
+        sessionStorage.setItem("Role_id", response.data.roleID)
       }
       console.log(JSON.stringify(response?.data));
 
       // const accessToken = response?.data?.accessToken;
       // const roles = response?.data?.roles;
-      // // setAuth({userName, userPass, roles, accessToken});
+      // // setAuth({userName, password, roles, accessToken});
       // setAuth({
       //   email,
       //   password
       // })
       // setUserName('');
-      // setUserPass('');
+      // setpassword('');
       // setSuccess(true);
       // sessionStorage.setItem('token', response.data.token);
       navigate("/");
@@ -94,8 +95,8 @@ const LoginPage = () => {
                     type="password"
                     className="form-control rounded-pill py-2"
                     placeholder="Password"
-                    onChange={(e) => setUserPass(e.target.value)}
-                    value={userPass}
+                    onChange={(e) => setpassword(e.target.value)}
+                    value={password}
                   />
                   {/* <div className="input-group-text rounded-end-pill">
                   <FontAwesomeIcon className="me-1" icon={faEye}/>

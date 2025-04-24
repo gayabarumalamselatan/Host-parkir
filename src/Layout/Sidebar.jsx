@@ -1,16 +1,44 @@
 import PropTypes from "prop-types";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
+import { AdminMenu, OperatorMenu } from "../Config/MenuList";
 
 const Sidebar = ({ show }) => {
+  const [sidebarMenuList, setSidebarMenuList] = useState([]);
+  const role = sessionStorage.getItem('Role_id');
+
+  useEffect(() => {
+    if(role === '1') {
+      setSidebarMenuList(AdminMenu);
+    } else if(role === '2'){
+      setSidebarMenuList(OperatorMenu)
+    } else {
+      setSidebarMenuList([])
+    }
+  }, []);
+
+  const renderSidebarMenu = (sidebarMenuList) => {
+    return sidebarMenuList.map(item => {
+      return(
+        <li className="nav-item mb-2" key="tambah">
+          <a href={item.menuLink} className="nav-link mx-4 align-items-center">
+            <p className="mb-0 py-1 sidebar-text">{item.menuName}</p>
+          </a>
+        </li>
+      )
+    })
+  }
+
+  console.log('menu', sidebarMenuList)
+
   return (
     <Fragment>
       <aside
-        className={`app-sidebar shadow ${show ? "" : "d-none"}`}
+        className={`h-100 sidebar-custom shadow ${show ? "" : "d-none"}`}
         style={{ overflowY: "hidden" }}
       >
-        <div className={``}>
-          <div className="user-panel py-3 d-flex justify-content-center align-items-center border-bottom">
-            <p className="sidebar-logo  my-0">Parkirin Dong!</p>
+        
+          <div className="d-flex justify-content-center align-items-center border-bottom" style={{height: '56px'}}>
+            <p className="sidebar-logo fs-3 text my-0" >Parkirin Dong!</p>
           </div>
 
           {/* Menu */}
@@ -26,22 +54,30 @@ const Sidebar = ({ show }) => {
                   <p className="mb-0 py-1 sidebar-text">Beranda</p>
                 </a>
               </li>
-              <li className="nav-item mb-2" key="tambah">
-                <a href="/tambah" className="nav-link mx-4 align-items-center">
+              {/* <li className="nav-item mb-2" key="tambah">
+                <a href="/tambah-member" className="nav-link mx-4 align-items-center">
                   <p className="mb-0 py-1 sidebar-text">Tambah Member</p>
                 </a>
               </li>
+              <li className="nav-item mb-2" key="tambah">
+                <a href="/manajemen-user" className="nav-link mx-4 align-items-center">
+                  <p className="mb-0 py-1 sidebar-text">Manajemen User</p>
+                </a>
+              </li> */}
+              {
+                renderSidebarMenu(sidebarMenuList)
+              }
               {/* {renderModuleItems(menuData)} */}
             </ul>
           </nav>
-        </div>
+        
       </aside>
     </Fragment>
   );
 };
 
 Sidebar.propTypes = {
-  show: PropTypes.func.isRequired,
+  show: PropTypes.bool.isRequired,
 };
 
 export default Sidebar;

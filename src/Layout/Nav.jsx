@@ -6,7 +6,7 @@ import { Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
-const Nav = ({ toggleSidebar }) => {
+const Nav = ({ toggleSidebar, show }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -33,8 +33,14 @@ const Nav = ({ toggleSidebar }) => {
 
   return (
     <Fragment>
-      <nav className="app-header navbar navbar-expand bg-body shadow border-0">
-        <div className="container-fluid">
+      <nav 
+        className="navbar-custom navbar navbar-expand bg-body shadow border-0 position-fixed z-2"
+        style={{ 
+          left: show ? '250px' : '0', 
+          width: show ? 'calc(100% - 250px)' : '100%'
+        }}
+      >
+        <div className="container-fluid z-2">
           <ul className="navbar-nav">
             <li className="nav-item">
               <a
@@ -100,6 +106,7 @@ const Nav = ({ toggleSidebar }) => {
 
 Nav.propTypes = {
   toggleSidebar: PropTypes.func.isRequired,
+  show: PropTypes.bool
 };
 
 export default Nav;

@@ -1,19 +1,79 @@
-import { Fragment } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Home from "../Content/Home";
-import Tambah from "../Content/Tambah";
+import { sessionstorageGet } from "../Config/Constant";
+import { AdminMenu, OperatorMenu } from "../Config/MenuList";
+import PageNotFound from "../Content/PageNotFound";
+import PropTypes from "prop-types";
 
-const Content = () => {
+const Content = ({show}) => {
+  const [dynamicContent, setDynamicContent] = useState([]);
+  const role =  sessionstorageGet({key: 'Role_id'})
+
+  useEffect(() => {
+    if(role === '1'){
+      setDynamicContent(AdminMenu);
+    } else if(role === '2'){
+      setDynamicContent(OperatorMenu);
+    } else {
+      setDynamicContent([])
+    }
+  },[])
+
+  
+  const loadComponent = (elementString) => {
+    const Component = lazy(() => 
+      import(`../Content/${elementString}.jsx`).catch(() => {
+        return import('../Content/PageNotFound');
+      })
+    );
+  
+    return (
+      <Suspense fallback={
+        <div className="flex justify-center items-center h-screen"> 
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      }>
+        <Component />
+      </Suspense>
+    );
+  };
+
+  const getDynamicRoutes = () => {
+    const menuReturn = dynamicContent ? dynamicContent.flatMap(menu => {
+      return [{
+        path: menu.menuLink,
+        element:loadComponent(menu.menuElement)
+      }]
+
+   }) : [];
+    return menuReturn
+  };
+
+  const dynamicRoutes = getDynamicRoutes()
+  console.log('sowow', show)
   return (
-    <Fragment>
-      <div className="app-main">
+    <div 
+      className="h-100"
+      style={{
+        marginLeft: show ? '250px' : '0px', width: show ? 'calc(100% - 250px)' : '100%'
+      }}
+    >
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/tambah" element={<Tambah />} />
+          <Route path="*" element={<PageNotFound/>}/>
+          {dynamicRoutes.map((route, index) => (
+            <Route key={index} path={route.path} element={route.element} />
+          ))}
         </Routes>
-      </div>
-    </Fragment>
+    </div>
   );
 };
+
+Content.propTypes = {
+  show: PropTypes.bool
+}
 
 export default Content;

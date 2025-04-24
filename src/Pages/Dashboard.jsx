@@ -24,10 +24,16 @@ const Dashboard = () => {
   console.log('sidebar', sidebarOpen)
 
   return (
-    <div className="app-wrapper">
-      <Nav toggleSidebar={toggleSidebar}/>
-      <Sidebar show={sidebarOpen}/>
-      <Content/>
+    <div className="d-flex flex-row w-100 dashboard-custom" style={{height: '100vh'}}>
+        <Sidebar show={sidebarOpen}/>
+      
+      <div className="w-100">
+        <Nav toggleSidebar={toggleSidebar} show={sidebarOpen}/>
+        <div className="content-custom">
+          <Content show={sidebarOpen}/>
+        </div>
+      </div>
+      
     </div>
   )
 }
