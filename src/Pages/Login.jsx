@@ -2,10 +2,13 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AUTH_LOGIN_SERVICE } from "../Config/URLConstant";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const LoginPage = () => {
   const [userName, setUserName] = useState("");
   const [password, setpassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const navigate = useNavigate();
   // const [errMsg ,setErrMsg] = useState()
 
@@ -66,13 +69,18 @@ const LoginPage = () => {
   return (
     <div>
       <div
-        className="d-flex justify-content-center align-items-center bg-body-secondary background-image"
+        className="d-flex flex-column justify-content-center align-items-center bg-body-secondary background-image"
         style={{ minHeight: "100vh" }}
       >
-        <div className="login-box">
+
+        <div className="card">
+          Error
+        </div>
+
+        <div className="login-box login-custom text-center">
           <div className="card-primary">
             <div className="card-body login-card-body bg-transparent">
-              <h1 className="login-box-msg text-white mb-4 fw-light">
+              <h1 className="login-box-msg text-white mb-5 fw-light">
                 Welcome Back!
               </h1>
               <form>
@@ -89,18 +97,35 @@ const LoginPage = () => {
                   <FontAwesomeIcon className="me-1" icon={faUser}/>
                 </div> */}
                 </div>
-                <div className="input-group mb-5">
+                <div className="input-group mb-5 d-flex position-relative align-items-center">
                   <input
                     id="loginPassword"
-                    type="password"
+                    type={isPasswordVisible? 'text' : 'password'}
                     className="form-control rounded-pill py-2"
                     placeholder="Password"
                     onChange={(e) => setpassword(e.target.value)}
                     value={password}
                   />
-                  {/* <div className="input-group-text rounded-end-pill">
-                  <FontAwesomeIcon className="me-1" icon={faEye}/>
-                </div> */}
+                  <button
+                    className="position-absolute d-flex align-items-center"
+                    style={{
+                      right: '9px',
+                      color: '#fff',
+                      background:'transparent',
+                      border: 'none'
+                    }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsPasswordVisible(!isPasswordVisible)
+                    }}
+                  >
+                    {
+                      isPasswordVisible ? 
+                      <FontAwesomeIcon icon={faEye}/>
+                      :
+                      <FontAwesomeIcon icon={faEyeSlash}/>
+                    }
+                  </button>
                 </div>
                 {/*begin::Row*/}
                 <div className="row">
