@@ -15,7 +15,7 @@ const LihatMember = () => {
             <div className="card-body">
               <div className="row align-items-end">
                 <div className="col-md-6 mb-3">
-                  <label className="form-label fw-semibold text-primary">
+                  <label className="form-label fw-semibold primary-text-color">
                     Nomor Polisi
                   </label>
                   <input

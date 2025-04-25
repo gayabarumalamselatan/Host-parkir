@@ -16,4 +16,9 @@ export const OperatorMenu = [
     menuLink: "/lihat-member",
     menuElement: "LihatMember",
   },
+  {
+    menuName: "Perpanjang",
+    menuLink: "/perpanjang",
+    menuElement: "Perpanjang",
+  },
 ];

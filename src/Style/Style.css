@@ -111,6 +111,12 @@ li.nav-item > a.nav-link:hover {
   border: none;
   font-family: "SF Pro Display", sans-serif;
 }
+.btn.btn-primary:hover {
+  background-color: #003470;
+}
+.btn.btn-primary:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 75, 160, 0.25);
+}
 
 /* Jumbotron */
 .jumbotron-bg {
