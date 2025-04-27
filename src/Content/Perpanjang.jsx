@@ -31,7 +31,7 @@ const Perpanjang = () => {
     <Fragment>
       <div className="m-4">
         <section className="content-header">
-          <ContentHeader title={isPrinted ? "Cetak Struk" : "Peranjang"} />
+          <ContentHeader title={isPrinted ? "Cetak Struk" : "Perpanjang"} />
         </section>
 
         <section className="mt-4">

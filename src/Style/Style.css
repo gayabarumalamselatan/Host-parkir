@@ -9,6 +9,29 @@ body {
 .primary-text-color {
   color: #004ba0;
 }
+.primary-button-custom{
+  background-color: #004ba0;
+  color: white;
+}
+
+/* Error message anim */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.custom-login-message{
+  animation: fadeIn 0.2s ease-in;
+  top: calc(50% - 250px);
+}
+.login-form-error-custom{
+  color: #ff4d4b;
+}
 
 /* Background */
 
@@ -151,7 +174,7 @@ h1#jumbo {
   color: #fff;
 }
 
-/* Contet */
+/* Content */
 .content-custom {
   margin-top: 56px;
   height: 100%;
@@ -162,6 +185,11 @@ h1#jumbo {
 .dashboard-custom {
   display: flex;
   height: 100vh;
+}
+
+/* Custom shadow */
+.custom-shadow{
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.25);
 }
 
 /* table */
@@ -207,6 +235,4 @@ h1#jumbo {
   border-top-left-radius: 15px !important;
   border-top-right-radius: 15px !important;
 }
-.card {
-  border-radius: 15px !important;
-}
+
