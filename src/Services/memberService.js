@@ -1,5 +1,5 @@
 import axios from "axios";
-import { MEMBER_SERVICE_BASE } from "../Config/URLConstant";
+import { MEMBER_SERVICE_BASE, PAGINATED_MEMBER_SERVICE } from "../Config/URLConstant";
 
 const MemberService = {
   insertMemberService: async (data) => {
@@ -12,9 +12,14 @@ const MemberService = {
     }
   },
 
-  fetchMemberService: async () => {
+  fetchMemberService: async (params) => {
     try {
-      const response = await axios.get(`${MEMBER_SERVICE_BASE}`);
+      let response;
+      if(params){
+        response = await axios.get(`${PAGINATED_MEMBER_SERVICE}?${params}`)
+      } else {
+        response = await axios.get(`${MEMBER_SERVICE_BASE}`);
+      }
       return response
     } catch (error) {
       console.error(error);
