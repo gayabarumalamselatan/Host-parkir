@@ -195,18 +195,15 @@ h1#jumbo {
 /* table */
 /* Header Tabel */
 .table thead th {
-  border-bottom: 3px;
-  border-right: 1px solid #dee2e6;
+  border-right: 2px solid #dee2e6;
+  border-bottom: 2px solid #dee2e6;
   font-weight: 600;
   font-family: "SF Pro Display", sans-serif;
-  background-color: #f0f2f5;
   text-align: center;
   vertical-align: middle;
-  border-top: none !important;
+  background-color: #fff;
 }
-.table thead th:first-child {
-  border-left: none;
-}
+
 .table thead th:last-child {
   border-right: none;
 }
@@ -214,25 +211,40 @@ h1#jumbo {
 .table tbody td {
   vertical-align: middle;
   font-family: "SF Pro Display", sans-serif;
-}
-.table tbody tr:first-child td {
-  border-left: none;
-  /* border-right: none; */
-}
-.table tbody tr:last-child td {
+  border-right: 2px solid #dee2e6;
   border-bottom: none;
 }
+.table tbody tr td:last-child{
+  border-right: none;
+}
+
 
 .table-hover tbody tr:hover {
   background-color: rgba(0, 75, 160, 0.05);
 }
 /* Card Header Tabel */
 .card-header {
-  background-color: #004ba0 !important;
+  border-top-right-radius: 30px!important;
+  border-top-left-radius: 30px!important;
   color: white !important;
   font-weight: 600;
   font-family: "SF Pro Display", sans-serif;
-  border-top-left-radius: 15px !important;
-  border-top-right-radius: 15px !important;
 }
 
+.overlay-spinner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; 
+}
+
+/* Custom Border Radius */
+.rounded-custom{
+  border-radius: 30px;
+}

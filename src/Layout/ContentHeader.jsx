@@ -7,7 +7,7 @@ const ContentHeader = ({ title }) => {
       <div className="container-fluid">
         <div className="row mb-2">
           <div className="col-sm-6">
-            <h1 className="fw-medium primary-text-color">{title}</h1>
+            <h1 className="fw-semibold primary-text-color">{title}</h1>
           </div>
           <div className="col-sm-6">
             <ol className="breadcrumb float-sm-end">

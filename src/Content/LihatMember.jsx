@@ -1,7 +1,34 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import ContentHeader from "../Layout/ContentHeader";
+import MemberService from "../Services/memberService";
 
 const LihatMember = () => {
+
+  const [memberData, setMemberData] = useState([]);
+  // const [isLoading, setIsLoading] = useState(false);
+
+
+  const fetchMember = async () => {
+    try {
+      const response = await MemberService.fetchMemberService();
+      // eslint-disable-next-line no-unused-vars
+      const formattedMemberData = response.data.data.map(({id, is_active, is_black_list, ...rest}) => rest)
+      setMemberData(formattedMemberData)
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMember();
+  },[])
+
+  console.log('memberData', memberData);
+
+  // Table thing
+  // const formattedMemberData = memberData.map(({id, is_active, is_black_list, ...rest}) => rest)
+  const headers = memberData.length > 0 ? Object.keys(memberData[0]) : [];
+
   return (
     <Fragment>
       <div className="m-4">
@@ -11,8 +38,8 @@ const LihatMember = () => {
 
         {/* Input Search */}
         <section className="mt-4">
-          <div className="card shadow-sm">
-            <div className="card-body">
+          <div className="card custom-shadow border border-0 rounded-custom">
+            <div className="card-body m-2">
               <div className="row align-items-end">
                 <div className="col-md-6 mb-3">
                   <label className="form-label fw-semibold primary-text-color">
@@ -25,7 +52,7 @@ const LihatMember = () => {
                   />
                 </div>
                 <div className="col-md-6 text-end">
-                  <button className="btn btn-primary mt-3">Cari</button>
+                  <button className="btn btn-primary px-4 mt-3 primary-button-custom rounded-4">Cari</button>
                 </div>
               </div>
             </div>
@@ -34,49 +61,42 @@ const LihatMember = () => {
 
         {/* Table Data */}
         <section className="mt-4">
-          <div className="card">
-            <div className="card-header bg-primary text-white fw-bold">
-              Data Pemilik
+          <div className="card rounded-custom border border-0 custom-shadow">
+            <div className="card-header primary-button-custom p-3 text-white fw-bold border border-0">   
+              <p className="m-0 ms-2">Data Pemilik</p>
             </div>
-            <div className="card-body table-responsive">
-              <table className="table table-bordered table-hover align-middle text-center">
-                <thead className="table-light text-center">
+            <div className="card-body table-responsive p-4">
+              <table className="table table-striped table-hover text-start">
+                <thead>
                   <tr>
-                    <th>No. Polisi</th>
-                    <th>Nama Pemilik</th>
-                    <th>Tanggal Masuk</th>
-                    <th>Tanggal Kadaluarsa</th>
-                    <th>Biaya Bulanan</th>
-                    <th>Tanggal Bayar</th>
-                    <th>Untuk</th>
-                    <th>Jumlah Pembayaran</th>
-                    <th>Keterangan</th>
-                    <th>Kadaluarsa Berikutnya</th>
+                    <th className="px-3">No</th>
+                    {headers.map((header) => (
+                      <th key={header} className="px-3 py-2">
+                        {header.replace(/_/g, ' ').toUpperCase()}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {Array(4)
-                    .fill()
-                    .map((_, idx) => (
-                      <tr key={idx}>
-                        <td>D 1234 AEO</td>
-                        <td>John Doe</td>
-                        <td>01/02/2024</td>
-                        <td>01/03/2024</td>
-                        <td>200,000.00</td>
-                        <td>01/03/2024</td>
-                        <td>1 bulan</td>
-                        <td>200,000.00</td>
-                        <td>Lorem Ipsum</td>
-                        <td>01/04/2024</td>
-                      </tr>
-                    ))}
+                  {memberData.map((row, index) => (
+                    <tr key={index}>
+                      <td className="px-3">
+                        {index+1}
+                      </td>
+                      {headers.map((header) => (
+                        <td key={header} className='px-3 py-2'>
+                          {row[header] ?? "-"}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
           </div>
         </section>
       </div>
+      <div style={{height: '20px'}}></div>
     </Fragment>
   );
 };

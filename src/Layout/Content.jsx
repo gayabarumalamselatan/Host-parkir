@@ -5,6 +5,7 @@ import { sessionstorageGet } from "../Config/Constant";
 import { AdminMenu, OperatorMenu } from "../Config/MenuList";
 import PageNotFound from "../Content/PageNotFound";
 import PropTypes from "prop-types";
+import PageLoading from "./PageLoading";
 
 const Content = ({show}) => {
   const [dynamicContent, setDynamicContent] = useState([]);
@@ -30,11 +31,7 @@ const Content = ({show}) => {
   
     return (
       <Suspense fallback={
-        <div className="flex justify-center items-center h-screen"> 
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
+        <PageLoading/>
       }>
         <Component />
       </Suspense>
