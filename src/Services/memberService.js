@@ -25,7 +25,19 @@ const MemberService = {
       console.error(error);
       return error
     }
+  },
+
+  updateMemberService: async (data) => {
+    // eslint-disable-next-line no-unused-vars
+    const {id, ...newData} = data;
+    try {
+      const response = await axios.put(`${MEMBER_SERVICE_BASE}/${data.id}`, newData);
+      return response;
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
   }
 }
 
-export default MemberService
+export default MemberService;

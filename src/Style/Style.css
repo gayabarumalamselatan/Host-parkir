@@ -9,6 +9,7 @@ body {
 .primary-text-color {
   color: #004ba0;
 }
+
 .primary-button-custom{
   background-color: #004ba0;
   color: white;
@@ -132,7 +133,7 @@ li.nav-item > a.nav-link:hover {
 }
 
 /* button */
-.btn.btn-primary {
+/* .btn.btn-primary {
   background-color: #004ba0;
   border: none;
   font-family: "SF Pro Display", sans-serif;
@@ -142,7 +143,7 @@ li.nav-item > a.nav-link:hover {
 }
 .btn.btn-primary:focus {
   box-shadow: 0 0 0 0.2rem rgba(0, 75, 160, 0.25);
-}
+} */
 
 /* Jumbotron */
 .jumbotron-bg {
