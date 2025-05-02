@@ -1,5 +1,5 @@
 import axios from "axios";
-import { MEMBER_SERVICE_BASE, PAGINATED_MEMBER_SERVICE } from "../Config/URLConstant";
+import { DISABLE_MEMBER_SERVICE, MEMBER_SERVICE_BASE, PAGINATED_MEMBER_SERVICE } from "../Config/URLConstant";
 
 const MemberService = {
   insertMemberService: async (data) => {
@@ -35,6 +35,16 @@ const MemberService = {
       return response;
     } catch (error) {
       console.error(error);
+      return error;
+    }
+  },
+
+  disableMember: async (id) => {
+    try {
+      const response = await axios.put(`${DISABLE_MEMBER_SERVICE}/${id}`);
+      return response;
+    } catch (error) {
+      console.log(error);
       return error;
     }
   }

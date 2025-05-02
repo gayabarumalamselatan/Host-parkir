@@ -12,7 +12,8 @@ const LihatMember = () => {
   const [paginationData, setPaginationData] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(5);
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [nopolSearch, setNopolSearch] = useState("")
   const [paginationDisplay, setPaginationDisplay] = useState({
     start: 0,
     end: 0,
@@ -31,11 +32,19 @@ const LihatMember = () => {
     })
   };
 
-  const fetchMember = async (page = 1, limit = 5) => {
+  const fetchMember = async (page = 1, limit = 5, nopol) => {
     setIsLoading(true);
-    const params = `limit=${limit}&page=${page}`
+    let params = [];
+    if(nopol){
+      params.push(`nomor_polisi=${nopol}`)
+    }
+    params.push(`limit=${limit}`);
+    params.push(`page=${page}`);
+    params.push(`is_active=true`);
+    const queryString = params.join('&');
+    console.log(queryString)
     try {
-      const response = await MemberService.fetchMemberService(params);
+      const response = await MemberService.fetchMemberService(queryString);
       // eslint-disable-next-line no-unused-vars
       const formattedMemberData = response.data.data.map(({id, is_active, is_black_list, ...rest}) => rest)
       setMemberData(formattedMemberData);
@@ -150,10 +159,17 @@ const LihatMember = () => {
                     type="text"
                     className="form-control"
                     placeholder="Masukkan Nomor Polisi"
+                    value={nopolSearch}
+                    onChange={(e) => setNopolSearch(e.target.value.toLocaleUpperCase())}
                   />
                 </div>
                 <div className="col-md-6 text-end">
-                  <button className="btn btn-primary w-25 px-4 my-auto primary-button-custom rounded-4">Cari</button>
+                  <button 
+                    className="btn btn-primary w-25 px-4 my-auto primary-button-custom rounded-4"
+                    onClick={() => {
+                      fetchMember(1, limit, nopolSearch)
+                    }}
+                  >Cari</button>
                 </div>
               </div>
             </div>
@@ -243,6 +259,7 @@ const LihatMember = () => {
             </div>
           </div>
         </section>
+
       </div>
       <div style={{height: '20px'}}></div>
     </Fragment>

@@ -28,7 +28,10 @@ const LoginPage = () => {
       // const requestData = {userName, password};
       const response = await axios.post(
         `${AUTH_LOGIN_SERVICE}`,
-        JSON.stringify({ userName, password }),
+        JSON.stringify({
+          user_name: userName, 
+          password 
+        }),
         // JSON.stringify({email, password}),
         // requestData,
         {

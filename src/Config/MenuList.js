@@ -2,7 +2,13 @@ export const AdminMenu = [
   {
     menuName: "Manajemen User",
     menuLink: "/manajemen-user",
-  },
+    menuElement: "ManajemenUser"
+  }, 
+  {
+    menuName: "Manajemen Member",
+    menuLink: "/manajemen-member",
+    menuElement: "ManajemenMember"
+  }
 ];
 
 export const OperatorMenu = [
