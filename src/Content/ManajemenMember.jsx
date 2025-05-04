@@ -414,51 +414,70 @@ const ManajemenMember = () => {
               <table className="table table-striped table-hover text-start">
                 <thead>
                   <tr>
-                    <th className="px-3">No</th>
-                    {headers.map((header) => (
-                      <th key={header} className="px-3 py-2">
-                        {header.replace(/_/g, ' ').toUpperCase()}
-                      </th>
-                    ))}
-                    <th>Aksi</th>
+                    {
+                      !isLoading?
+                      <>
+                        <th className="px-3">No</th>
+                        {headers.map((header) => (
+                          <th key={header} className="px-3 py-2">
+                            {header.replace(/_/g, ' ').toUpperCase()}
+                          </th>
+                        ))}
+                        <th>Aksi</th>
+                      </>
+                      :
+                      <>
+                        <p>
+                          Loading...
+                        </p>
+                      </>
+                      
+                    }
                   </tr>
                 </thead>
                 <tbody>
-                  {memberData.map((row, index) => (
-                    <tr key={index}>
-                      <td className="px-3">
-                      {paginationDisplay.startingIndex + index + 1}
-                      </td>
-                      {headers.map((header) => (
-                        <td key={header} className='px-3 py-2'>
-                          {row[header] ?? "-"}
+                  {
+                    memberData ? 
+                    memberData.map((row, index) => (
+                      <tr key={index}>
+                        <td className="px-3">
+                        {paginationDisplay.startingIndex + index + 1}
                         </td>
-                      ))}
-                      <td>
-                        <div className="d-flex gap-2">
-
-                          <button 
-                            className="btn btn-primary primary-button-custom"
-                            onClick={() => {
-                              setIsEditModalOpen(true)
-                              setMemberToEdit(row)
-                            }}  
-                          >
-                            <FontAwesomeIcon icon={faEdit}/>
-                          </button>
-                          <button 
-                            className="btn btn-danger danger-button-custom"
-                            onClick={() => {
-                              handleDeleteMember(row)
-                            }}
-                          >
-                            <FontAwesomeIcon icon={faTrash}/>
-                          </button>
-
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                        {headers.map((header) => (
+                          <td key={header} className='px-3 py-2'>
+                            {row[header] ?? "-"}
+                          </td>
+                        ))}
+                        <td>
+                          <div className="d-flex gap-2">
+  
+                            <button 
+                              className="btn btn-primary primary-button-custom"
+                              onClick={() => {
+                                setIsEditModalOpen(true)
+                                setMemberToEdit(row)
+                              }}  
+                            >
+                              <FontAwesomeIcon icon={faEdit}/>
+                            </button>
+                            <button 
+                              className="btn btn-danger danger-button-custom"
+                              onClick={() => {
+                                handleDeleteMember(row)
+                              }}
+                            >
+                              <FontAwesomeIcon icon={faTrash}/>
+                            </button>
+  
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                    :
+                    <>
+                      <p>no</p>
+                    </>
+                  }
                 </tbody>
               </table>
 

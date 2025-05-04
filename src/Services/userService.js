@@ -41,6 +41,26 @@ const UserService = {
       console.error(error);
       return error;
     }
+  },
+
+  updateUser: async (data, id, params) => {
+    try {
+      const response = await axios.put(`${USER_SERVICE_BASE}/${id}?is_change_password=${params}`, data);
+      return response;
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  },
+
+  deleteUser: async (id) => {
+    try {
+      const response = await axios.delete(`${USER_SERVICE_BASE}/${id}`);
+      return response;
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
   }
 }
 

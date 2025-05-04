@@ -10,16 +10,18 @@ import Swal from 'sweetalert2'
 
 const ManajemenUser = () => {
   const initalData = {
+    id: 0,
     user_name: '',
     password: '',
     confirm_password: '',
+    new_password: '',
     role_id: 0
   };
   const requiredFields = [
     {key: 'user_name', label: 'Username'},
     {key: 'password', label: 'Password'},
     {key: 'confirm_password', label: 'Konfirmasi Password'},
-    {key: 'confirm_password', label: 'Konfirmasi Password'},
+    {key: 'new_password', label: 'Password Baru'},
     {key: 'role_id', label: 'Role'},
   ]
   const [userToCreate, setUserToCreate] = useState(initalData);
@@ -33,6 +35,7 @@ const ManajemenUser = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState({
     password: false, 
     confirmPassword: false,
+    newPassword: false,
   });
 
   const fetchRoleOption = async () =>{
@@ -56,7 +59,7 @@ const ManajemenUser = () => {
     try {
       const response = await UserService.fecthUserView();
       // eslint-disable-next-line no-unused-vars
-      const formattedData = response.data.data.map(({user_id, is_logged_in, password, ...rest}) => rest)
+      const formattedData = response.data.data.map(({ is_logged_in, password, ...rest}) => rest)
       setUserData(formattedData);
       setIsLoading(false);
     } catch (error) {
@@ -65,7 +68,7 @@ const ManajemenUser = () => {
     }
   };
 
-  const headers = userData.length > 0 ? Object.keys(userData[0]) : [];
+  const headers = userData.length > 0 ? Object.keys(userData[0]).filter(header => header !== 'user_id') : [];
 
   useEffect(() => {
     fetchUser();
@@ -86,6 +89,7 @@ const ManajemenUser = () => {
   const autoFillUser = (data) => {
     console.log(data);
     setUserToCreate({
+      id: data.user_id,
       user_name: data.user_name,
       role_id: roleOptions.find(item => item.label === data.role_name).id
     })
@@ -99,13 +103,61 @@ const ManajemenUser = () => {
     setIsShowModal(false);
   }
 
+  const deleteUser = async (data) => {
+    const confirm = await Swal.fire({
+      title: "Yakin?",
+      text: `User ${data.user_name} akan dihapus.`,
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Batal',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Hapus',
+      reverseButtons: true
+    });
+
+    if(confirm.isConfirmed){
+      try {
+        setIsLoading(true);
+        const response = await UserService.deleteUser(data.user_id);
+        if(response.status === 200) {
+          setIsLoading(false);
+          Swal.fire({
+            title: "Yes, Berhasil!",
+            text: `User ${data.user_name} berhasil dihapus.`,
+            icon: 'success',
+            confirmButtonText: "OK"
+          }).then(() => {
+            fetchUser();
+          })
+        } else {
+          setIsLoading(false);
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Ada yang salah nih!"
+          })
+        }
+      } catch (error) {
+        console.error("Error adding member",error);
+        setIsLoading(false)
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Ada yang salah nih!"
+        })
+      }
+    }
+  }
+
   const userSender = async () => {
     if (
       !userToCreate.user_name ||
       !userToCreate.role_id ||
       !userToCreate.password ||
-      !userToCreate.confirm_password ||
-      userToCreate.password !== userToCreate.confirm_password
+      (!userToCreate.confirm_password && !isEdit ) ||
+      (!isEdit && userToCreate.password !== userToCreate.confirm_password) ||
+      (isEdit && (userToCreate.new_password !== userToCreate.confirm_password || !userToCreate.new_password))
     ) {
       let alertText = "Semua field harus diisi.";
       let newErrors = {};
@@ -139,7 +191,6 @@ const ManajemenUser = () => {
     
       return;
     }
-    
 
     const confirm = await Swal.fire({
       title: "Yakin?",
@@ -152,18 +203,42 @@ const ManajemenUser = () => {
       confirmButtonText: 'Kirim',
       reverseButtons: true
     })
+
     if(confirm.isConfirmed){
       setErrors({});
       setIsLoading(true);
       try {
         // eslint-disable-next-line no-unused-vars
-        const {confirm_password, ...userToSend} = userToCreate;
-        const response = await UserService.registerUser(userToSend);
+        const {id, new_password, confirm_password, ...userToSend} = userToCreate;
+        
+        let response
+
+        if(isEdit === true){
+          // eslint-disable-next-line no-unused-vars
+          const {confirm_password, ...userToEdit} = userToCreate
+          response = await UserService.updateUser(userToEdit ,userToCreate.id, isChangePass)
+        } 
+        if(isEdit === false) {
+          response = await UserService.registerUser(userToSend);
+        }
+
         if(response.status === 201) {
           setIsLoading(false);
           Swal.fire({
             title: "Yes, Berhasil!",
             text: "User baru berhasil ditambahkan.",
+            icon: 'success',
+            confirmButtonText: "OK"
+          }).then(() => {
+            setUserToCreate(initalData);
+            closeModal();
+            fetchUser()
+          })
+        } else if(response.status === 200){
+          setIsLoading(false);
+          Swal.fire({
+            title: "Yes, Berhasil!",
+            text: "User berhasil di update.",
             icon: 'success',
             confirmButtonText: "OK"
           }).then(() => {
@@ -191,7 +266,9 @@ const ManajemenUser = () => {
     }
   }
 
+  console.log(userToCreate)
   console.log(isChangePass)
+
   return (
     <Fragment>
 
@@ -208,20 +285,12 @@ const ManajemenUser = () => {
         <section className="mt-4">
           <div className="card custom-shadow border border-0 rounded-custom">
             <div className="card-body my-3  mx-3">
-              <div className="d-flex align-items-center">
-                <div className="col-md-6">
-                  <div className="d-flex me-2 gap-2">
-                    <p className="m-0 primary-text-color fw-semibold">Baris Per Halaman:</p>
-                    <select
-                    >
-                      <option value={5}>5</option>
-                      <option value={10}>10</option>
-                      <option value={20}>20</option>
-                    </select>
-                  </div>
-                </div>
+              <div className="d-flex align-items-center justify-content-end">
                 <div className="col-md-6 text-end justify-content-end d-flex gap-2">
-                  <button className="btn primary-text-color">
+                  <button 
+                    className="btn primary-text-color"
+                    onClick={() => fetchUser()}  
+                  >
                     <FontAwesomeIcon icon={faRefresh}/>
                   </button>
                   <button 
@@ -232,9 +301,6 @@ const ManajemenUser = () => {
                     }}
                   >
                     <FontAwesomeIcon icon={faUserPlus}/>
-                  </button>
-                  <button className="btn btn-primary px-4 my-auto primary-button-custom rounded-4">
-                    Filter
                   </button>
                 </div>
               </div>
@@ -289,6 +355,10 @@ const ManajemenUser = () => {
                           
                           <button 
                             className="btn btn-danger danger-button-custom"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              deleteUser(row)
+                            }}
                           >
                             <FontAwesomeIcon icon={faTrash}/>
                           </button>
@@ -390,14 +460,14 @@ const ManajemenUser = () => {
                       <label className='form-label fw-semibold primary-text-color'>Password Baru</label>
                       <div className='d-flex gap-2'>
                         <input 
-                          type={isPasswordVisible.password ? "text" : "password"}
+                          type={isPasswordVisible.newPassword ? "text" : "password"}
                           name='password'
                           className='form-control'
-                          value={userToCreate.password}
+                          value={userToCreate.new_password}
                           onChange={(e) => {
                             setUserToCreate({
                               ...userToCreate,
-                              password: e.target.value
+                             new_password: e.target.value
                             })
                           }}
                         />
@@ -407,32 +477,32 @@ const ManajemenUser = () => {
                             e.preventDefault();
                             setIsPasswordVisible({
                               ...isPasswordVisible,
-                              password: !isPasswordVisible.password,
+                              newPassword: !isPasswordVisible.newPassword,
                             })
                           }}
                         >
-                          { isPasswordVisible.password ?
+                          { isPasswordVisible.newPassword ?
                             <FontAwesomeIcon icon={faEye}/>
                             :
                             <FontAwesomeIcon icon={faEyeSlash}/>
                           }
                         </button>
                       </div>
-                      {errors.password && <p className="text-danger mt-1 mb-0">{errors.password}</p>}
+                      {errors.new_password && <p className="text-danger mt-1 mb-0">{errors.new_password}</p>}
                     </div>
 
                     <div className='col-md-6 mb-3'>
                       <label className='form-label fw-semibold primary-text-color'>Konfirmasi Password Baru</label>
                       <div className='d-flex gap-2'>
                         <input 
-                          type={isPasswordVisible.password ? "text" : "password"}
+                          type={isPasswordVisible.confirmPassword ? "text" : "password"}
                           name='password'
                           className='form-control'
-                          value={userToCreate.password}
+                          value={userToCreate.confirm_password}
                           onChange={(e) => {
                             setUserToCreate({
                               ...userToCreate,
-                              password: e.target.value
+                              confirm_password: e.target.value
                             })
                           }}
                         />
@@ -442,18 +512,18 @@ const ManajemenUser = () => {
                             e.preventDefault();
                             setIsPasswordVisible({
                               ...isPasswordVisible,
-                              password: !isPasswordVisible.password,
+                              confirmPassword: !isPasswordVisible.confirmPassword,
                             })
                           }}
                         >
-                          { isPasswordVisible.password ?
+                          { isPasswordVisible.confirmPassword ?
                             <FontAwesomeIcon icon={faEye}/>
                             :
                             <FontAwesomeIcon icon={faEyeSlash}/>
                           }
                         </button>
                       </div>
-                      {errors.password && <p className="text-danger mt-1 mb-0">{errors.password}</p>}
+                      {errors.confirm_password && <p className="text-danger mt-1 mb-0">{errors.confirm_password}</p>}
                     </div>
                   </>
                   :
@@ -603,12 +673,34 @@ const ManajemenUser = () => {
         </Modal.Body>
         <Modal.Footer>
           {isEdit ? 
-            <button 
-              className='btn btn-secondary secondary-button-custom rounded-4'
-              onClick={() => setIsChangePass(!isChangePass)}
-            >
-              Ganti Password
-            </button>
+            <>
+              <button 
+                className='btn btn-secondary secondary-button-custom rounded-4'
+                onClick={() => {
+                  setErrors({});
+                  setUserToCreate({
+                    ...userToCreate,
+                    password: '',
+                    confirm_password: '',
+                    new_password: ''
+                  })
+                }}
+              >
+                Reset
+              </button>
+              <button 
+                className='btn btn-secondary secondary-button-custom rounded-4'
+                onClick={() => setIsChangePass(!isChangePass)}
+              >
+                {
+                  isChangePass ?
+                  "Kembali"
+                  :
+                  "Ganti Password"
+                }
+              </button>
+            </>
+            
           :
             <button 
               className='btn btn-secondary secondary-button-custom rounded-4'
