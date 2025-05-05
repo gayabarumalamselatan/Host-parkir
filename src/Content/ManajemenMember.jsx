@@ -6,6 +6,7 @@ import MemberService from "../Services/memberService"
 import PageLoading from "../Layout/PageLoading"
 import { Modal } from "react-bootstrap"
 import Swal from "sweetalert2"
+import { LogoutExp } from "../Services/expiredToken"
 
 
 const ManajemenMember = () => {
@@ -75,14 +76,27 @@ const ManajemenMember = () => {
     console.log(queryString)
     try {
       const response = await MemberService.fetchMemberService(queryString);
-      // eslint-disable-next-line no-unused-vars
-      const formattedMemberData = response.data.data.map(({is_active, is_black_list, ...rest}) => rest)
-      setMemberData(formattedMemberData);
-      setPaginationData(response.data.pagination);
-      calculateDisplayRange(response.data.pagination.current_page, response.data.pagination.limit, response.data.pagination.total_members);
-      setIsLoading(false);
+      if(response.status === 200){
+        // eslint-disable-next-line no-unused-vars
+        const formattedMemberData = response.data.data.map(({is_active, is_black_list, ...rest}) => rest)
+        setMemberData(formattedMemberData);
+        setPaginationData(response.data.pagination);
+        calculateDisplayRange(response.data.pagination.current_page, response.data.pagination.limit, response.data.pagination.total_members);
+      } else {
+        throw response;
+      }
     } catch (error) {
       console.error(error);
+      if(error.response.data.message === "Token is expired"){
+        LogoutExp();
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Ada yang salah nih!"
+        })
+      }
+    } finally {
       setIsLoading(false);
     }
   };
@@ -203,21 +217,20 @@ const ManajemenMember = () => {
             fetchMember(1, limit)
           })
         } else {
-          setIsLoading(false);
+          throw response;
+        }
+      } catch (error) {
+        console.error("Error adding member",error);
+        setIsLoading(false)
+        if(error.response.data.message === "Token is expired"){
+          LogoutExp();
+        } else {
           Swal.fire({
             icon: "error",
             title: "Oops...",
             text: "Ada yang salah nih!"
           })
         }
-      } catch (error) {
-        console.error("Error adding member",error);
-        setIsLoading(false)
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Ada yang salah nih!"
-        })
       }
     }
   }
@@ -249,21 +262,20 @@ const ManajemenMember = () => {
             fetchMember(1, limit)
           })
         } else {
-          setIsLoading(false);
+          throw response;
+        }
+      } catch (error) {
+        console.error("Error deleting member",error);
+        setIsLoading(false)
+        if(error.response.data.message === "Token is expired"){
+          LogoutExp();
+        } else {
           Swal.fire({
             icon: "error",
             title: "Oops...",
             text: "Ada yang salah nih!"
           })
         }
-      } catch (error) {
-        console.error("Error adding member",error);
-        setIsLoading(false)
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Ada yang salah nih!"
-        })
       }
     }
   }
@@ -415,6 +427,11 @@ const ManajemenMember = () => {
                 <thead>
                   <tr>
                     {
+                      memberData.length === 0 ?
+                      <>
+                        <p>No data</p>
+                      </>
+                      :
                       !isLoading?
                       <>
                         <th className="px-3">No</th>

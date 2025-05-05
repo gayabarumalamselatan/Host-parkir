@@ -42,6 +42,7 @@ const LoginPage = () => {
       if (response.status === 200) {
         sessionStorage.setItem("isLoggedIn", "true");
         sessionStorage.setItem("Role_id", response.data.roleID)
+        sessionStorage.setItem("token", response.data.accessToken)
       }
 
       console.log(JSON.stringify(response?.data));

@@ -5,6 +5,7 @@ import MemberService from "../Services/memberService";
 import Swal from "sweetalert2";
 import PageLoading from "../Layout/PageLoading";
 import StrukService from "../Services/strukService";
+import { LogoutExp } from "../Services/expiredToken";
 
 const Perpanjang = () => {
 
@@ -38,20 +39,33 @@ const Perpanjang = () => {
     try {
       const response = await MemberService.fetchMemberService();
 
-      const mappedOption = response.data.data.map(item => ({
-        id: item.id,
-        value: item.nomor_polisi,
-        label: item.nomor_polisi,
-        nama_pemilik: item.nama_pemilik,
-        tanggal_masuk: item.tanggal_masuk,
-        tanggal_kadaluarsa: item.tanggal_kadaluarsa,
-        tarif_bulanan: item.tarif_bulanan,
-        keterangan: item.keterangan
-      }))
-
-      setNopolOption(mappedOption)
+      if(response.status === 200){
+        const mappedOption = response.data.data.map(item => ({
+          id: item.id,
+          value: item.nomor_polisi,
+          label: item.nomor_polisi,
+          nama_pemilik: item.nama_pemilik,
+          tanggal_masuk: item.tanggal_masuk,
+          tanggal_kadaluarsa: item.tanggal_kadaluarsa,
+          tarif_bulanan: item.tarif_bulanan,
+          keterangan: item.keterangan
+        }))
+  
+        setNopolOption(mappedOption)
+      } else {
+        throw response;
+      }
     } catch (error) {
       console.error(error)
+      if(error.response.data.message === "Token is expired"){
+        LogoutExp();
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Ada yang salah nih!"
+        })
+      }
     }
   }
 
@@ -122,9 +136,8 @@ const Perpanjang = () => {
           await MemberService.updateMemberService(memberDataToUpdate),
           await StrukService.createNewStruk(strukData)
         ])
-        console.log(MemberService, createStruk);
+        console.log("gor",MemberService, createStruk);
         if(updateMember.status === 200 && createStruk.status === 201){
-          setIsLoading(false)
           Swal.fire({
             title: "Yes, Berhasil!",
             text: "Member berhasil diperpanjang.",
@@ -135,26 +148,24 @@ const Perpanjang = () => {
             setIsPrinted(false)
           })
         } else {
-          setIsLoading(false)
+          throw {updateMember, createStruk}
+        }
+      } catch (error) {
+        console.error("Error adding member",error);
+        if(error.updateMember.response.data.message==="Token is expired" || error.createStruk.response.data.message==="Token is expired"){
+          LogoutExp();
+        } else {
           Swal.fire({
             icon: "error",
             title: "Oops...",
             text: "Ada yang salah nih!"
           })
         }
-      } catch (error) {
-        console.error("Error adding member",error);
-        setIsLoading(false)
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Ada yang salah nih!"
-        })
+      } finally {
+        setIsLoading(false);
       }
     }
   }
-
-  console.log(perpanjangData)
 
   return (
     <Fragment>

@@ -1,10 +1,18 @@
 import axios from "axios";
 import { DISABLE_MEMBER_SERVICE, MEMBER_SERVICE_BASE, PAGINATED_MEMBER_SERVICE } from "../Config/URLConstant";
 
+const accessToken = sessionStorage.getItem("token");
+const header = {
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'Content-Type': 'application/json'
+  }
+}
+
 const MemberService = {
   insertMemberService: async (data) => {
     try {
-      const response = await axios.post(`${MEMBER_SERVICE_BASE}`, data);
+      const response = await axios.post(`${MEMBER_SERVICE_BASE}`, data, header);
       return response;
     } catch (error) {
       console.error('Error post data: ', error);
@@ -16,13 +24,14 @@ const MemberService = {
     try {
       let response;
       if(params){
-        response = await axios.get(`${PAGINATED_MEMBER_SERVICE}?${params}`)
+        response = await axios.get(`${PAGINATED_MEMBER_SERVICE}?${params}`, header)
       } else {
-        response = await axios.get(`${MEMBER_SERVICE_BASE}`);
+        response = await axios.get(`${MEMBER_SERVICE_BASE}`, header);
       }
+
       return response
     } catch (error) {
-      console.error(error);
+      console.error(error)
       return error
     }
   },
@@ -31,7 +40,7 @@ const MemberService = {
     // eslint-disable-next-line no-unused-vars
     const {id, ...newData} = data;
     try {
-      const response = await axios.put(`${MEMBER_SERVICE_BASE}/${data.id}`, newData);
+      const response = await axios.put(`${MEMBER_SERVICE_BASE}/${data.id}`, newData, header);
       return response;
     } catch (error) {
       console.error(error);
@@ -41,7 +50,7 @@ const MemberService = {
 
   disableMember: async (id) => {
     try {
-      const response = await axios.put(`${DISABLE_MEMBER_SERVICE}/${id}`);
+      const response = await axios.put(`${DISABLE_MEMBER_SERVICE}/${id}`, {},  header);
       return response;
     } catch (error) {
       console.log(error);

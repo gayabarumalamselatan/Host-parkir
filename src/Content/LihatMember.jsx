@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretLeft } from "@fortawesome/free-solid-svg-icons";
 import { faCaretRight } from "@fortawesome/free-solid-svg-icons/faCaretRight";
 import PageLoading from "../Layout/PageLoading";
+import { LogoutExp } from "../Services/expiredToken";
+import Swal from "sweetalert2";
 
 const LihatMember = () => {
 
@@ -45,14 +47,27 @@ const LihatMember = () => {
     console.log(queryString)
     try {
       const response = await MemberService.fetchMemberService(queryString);
-      // eslint-disable-next-line no-unused-vars
-      const formattedMemberData = response.data.data.map(({id, is_active, is_black_list, ...rest}) => rest)
-      setMemberData(formattedMemberData);
-      setPaginationData(response.data.pagination);
-      calculateDisplayRange(response.data.pagination.current_page, response.data.pagination.limit, response.data.pagination.total_members);
-      setIsLoading(false);
+      if(response.status === 200){
+        // eslint-disable-next-line no-unused-vars
+        const formattedMemberData = response.data.data.map(({id, is_active, is_black_list, ...rest}) => rest)
+        setMemberData(formattedMemberData);
+        setPaginationData(response.data.pagination);
+        calculateDisplayRange(response.data.pagination.current_page, response.data.pagination.limit, response.data.pagination.total_members);
+      } else {
+        throw response;
+      }
     } catch (error) {
       console.error(error);
+      if(error.response.data.message === "Token is expired"){
+        LogoutExp();
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Ada yang salah nih!"
+        })
+      }
+    } finally {
       setIsLoading(false);
     }
   };

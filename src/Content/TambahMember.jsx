@@ -3,6 +3,7 @@ import ContentHeader from "../Layout/ContentHeader";
 import Swal from "sweetalert2";
 import MemberService from "../Services/memberService";
 import PageLoading from "../Layout/PageLoading";
+import { LogoutExp } from "../Services/expiredToken";
 
 const TambahMember = () => {
 
@@ -81,7 +82,6 @@ const TambahMember = () => {
         const response = await MemberService.insertMemberService(newMemberToCreate)
         console.log(response)
         if(response.status === 201){
-          setIsLoading(false)
           Swal.fire({
             title: "Yes, Berhasil!",
             text: "Member baru berhasil ditambahkan.",
@@ -90,15 +90,23 @@ const TambahMember = () => {
           }).then(() => {
             setMemberToCreate(initialMember)
           })
-        }
+        } else {
+          throw response;
+        } 
       } catch (error) {
-        console.error("Error adding member",error);
-        setIsLoading(false)
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Ada yang salah nih!"
-        })
+        console.error("Error adding member", error);
+        console.log("error", error)
+        if (error.response.data.message === "Token is expired") {
+         LogoutExp();
+        } else {
+          Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Ada yang salah nih!"
+          });
+        }
+      } finally {
+        setIsLoading(false);
       }
     }
   }

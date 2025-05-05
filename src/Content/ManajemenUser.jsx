@@ -7,6 +7,7 @@ import { Modal } from 'react-bootstrap'
 import PageLoading from "../Layout/PageLoading";
 import Select from 'react-select'
 import Swal from 'sweetalert2'
+import { LogoutExp } from '../Services/expiredToken'
 
 const ManajemenUser = () => {
   const initalData = {
@@ -32,6 +33,7 @@ const ManajemenUser = () => {
   const [isShowModal, setIsShowModal] = useState(false);
   const [errors, setErrors] = useState({});
   const [isChangePass, setIsChangePass] = useState(false);
+  const [isExpiredToken, setIsExpiredToken] = useState(false)
   const [isPasswordVisible, setIsPasswordVisible] = useState({
     password: false, 
     confirmPassword: false,
@@ -42,15 +44,24 @@ const ManajemenUser = () => {
     try {
       const response = await UserService.fetchRoles();
 
-      const mappedOption = response.data.data.map( item => ({
-        id: item.ID,
-        value: item.ID,
-        label: item.Name
-      }));
-
-      setRoleOptions(mappedOption);
+      if(response.status === 200){
+        const mappedOption = response.data.data.map( item => ({
+          id: item.ID,
+          value: item.ID,
+          label: item.Name
+        }));
+  
+        setRoleOptions(mappedOption);
+      } else {
+        throw response
+      }
+      
     } catch (error) {
-      console.error(error)
+      console.error("Error fetch roles",error);
+      if(error.response.data.message === "Token is expired"){
+        setIsExpiredToken(true);
+        
+      }
     }
   }
 
@@ -58,13 +69,21 @@ const ManajemenUser = () => {
     setIsLoading(true);
     try {
       const response = await UserService.fecthUserView();
-      // eslint-disable-next-line no-unused-vars
-      const formattedData = response.data.data.map(({ is_logged_in, password, ...rest}) => rest)
-      setUserData(formattedData);
-      setIsLoading(false);
+      
+      if(response.status === 200){
+        // eslint-disable-next-line no-unused-vars
+        const formattedData = response.data.data.map(({ is_logged_in, password, ...rest}) => rest)
+        setUserData(formattedData);
+      } else {
+        throw response
+      }
     } catch (error) {
-      console.error(error);
-      setIsLoading(false);
+      console.error("Error fetching users",error);
+      if(error.response.data.message === "Token is expired"){
+        setIsExpiredToken(true);
+      }
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -121,7 +140,6 @@ const ManajemenUser = () => {
         setIsLoading(true);
         const response = await UserService.deleteUser(data.user_id);
         if(response.status === 200) {
-          setIsLoading(false);
           Swal.fire({
             title: "Yes, Berhasil!",
             text: `User ${data.user_name} berhasil dihapus.`,
@@ -131,21 +149,22 @@ const ManajemenUser = () => {
             fetchUser();
           })
         } else {
-          setIsLoading(false);
+         throw response;
+        }
+      } catch (error) {
+        console.error("Error deleting user",error.response.data.message);
+        
+        if(error.response.data.message === "Token is expired"){
+          LogoutExp()
+        } else {
           Swal.fire({
             icon: "error",
             title: "Oops...",
             text: "Ada yang salah nih!"
           })
         }
-      } catch (error) {
-        console.error("Error adding member",error);
-        setIsLoading(false)
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Ada yang salah nih!"
-        })
+      } finally {
+        setIsLoading(false);
       }
     }
   }
@@ -157,7 +176,7 @@ const ManajemenUser = () => {
       !userToCreate.password ||
       (!userToCreate.confirm_password && !isEdit ) ||
       (!isEdit && userToCreate.password !== userToCreate.confirm_password) ||
-      (isEdit && (userToCreate.new_password !== userToCreate.confirm_password || !userToCreate.new_password))
+      (isEdit && isChangePass && (userToCreate.new_password !== userToCreate.confirm_password || !userToCreate.new_password))
     ) {
       let alertText = "Semua field harus diisi.";
       let newErrors = {};
@@ -223,7 +242,6 @@ const ManajemenUser = () => {
         }
 
         if(response.status === 201) {
-          setIsLoading(false);
           Swal.fire({
             title: "Yes, Berhasil!",
             text: "User baru berhasil ditambahkan.",
@@ -235,7 +253,6 @@ const ManajemenUser = () => {
             fetchUser()
           })
         } else if(response.status === 200){
-          setIsLoading(false);
           Swal.fire({
             title: "Yes, Berhasil!",
             text: "User berhasil di update.",
@@ -247,27 +264,35 @@ const ManajemenUser = () => {
             fetchUser()
           })
         } else {
-          setIsLoading(false);
+          throw response
+        }
+      } catch (error) {
+        console.error("Error",error);
+
+        if(error.response.data.message === "Token is expired"){
+          LogoutExp()
+        } else {
           Swal.fire({
             icon: "error",
             title: "Oops...",
             text: "Ada yang salah nih!"
           })
         }
-      } catch (error) {
-        console.error("Error adding member",error);
-        setIsLoading(false)
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Ada yang salah nih!"
-        })
+      } finally {
+        setIsLoading(false);
       }
     }
   }
 
+  useEffect(()=>{
+    if(isExpiredToken){
+      LogoutExp();
+    }
+    console.log("eredi",isExpiredToken)
+  },[isExpiredToken])
+
   console.log(userToCreate)
-  console.log(isChangePass)
+  console.log("isceng",isChangePass)
 
   return (
     <Fragment>
@@ -400,6 +425,7 @@ const ManajemenUser = () => {
                   }}
                   name='user_name'
                   className='form-control'
+                  disabled
                 />
               </div>
 
