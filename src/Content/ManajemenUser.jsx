@@ -60,7 +60,12 @@ const ManajemenUser = () => {
       console.error("Error fetch roles",error);
       if(error.response.data.message === "Token is expired"){
         setIsExpiredToken(true);
-        
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Ada yang salah nih!"
+        })
       }
     }
   }
@@ -81,6 +86,12 @@ const ManajemenUser = () => {
       console.error("Error fetching users",error);
       if(error.response.data.message === "Token is expired"){
         setIsExpiredToken(true);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Ada yang salah nih!"
+        })
       }
     } finally {
       setIsLoading(false)
