@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { Fragment, useEffect, useState } from "react";
 import { AdminMenu, OperatorMenu } from "../Config/MenuList";
+import { Link } from "react-router-dom";
 
 const Sidebar = ({ show }) => {
   const [sidebarMenuList, setSidebarMenuList] = useState([]);
@@ -19,10 +20,10 @@ const Sidebar = ({ show }) => {
   const renderSidebarMenu = (sidebarMenuList) => {
     return sidebarMenuList.map(item => {
       return(
-        <li className="nav-item mb-2" key="tambah">
-          <a href={item.menuLink} className="nav-link mx-4 align-items-center">
+        <li className="nav-item mb-2" key={item.menuLink}>
+          <Link to={item.menuLink} className="nav-link mx-4 align-items-center">
             <p className="mb-0 py-1 sidebar-text">{item.menuName}</p>
-          </a>
+          </Link>
         </li>
       )
     })
@@ -50,24 +51,13 @@ const Sidebar = ({ show }) => {
               data-accordion="false"
             >
               <li className="nav-item mb-2" key="home">
-                <a href="/" className="nav-link mx-4 align-items-center">
+                <Link to="/" className="nav-link mx-4 align-items-center">
                   <p className="mb-0 py-1 sidebar-text">Beranda</p>
-                </a>
+                </Link>
               </li>
-              {/* <li className="nav-item mb-2" key="tambah">
-                <a href="/tambah-member" className="nav-link mx-4 align-items-center">
-                  <p className="mb-0 py-1 sidebar-text">Tambah Member</p>
-                </a>
-              </li>
-              <li className="nav-item mb-2" key="tambah">
-                <a href="/manajemen-user" className="nav-link mx-4 align-items-center">
-                  <p className="mb-0 py-1 sidebar-text">Manajemen User</p>
-                </a>
-              </li> */}
               {
                 renderSidebarMenu(sidebarMenuList)
               }
-              {/* {renderModuleItems(menuData)} */}
             </ul>
           </nav>
         

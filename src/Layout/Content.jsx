@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState, useMemo } from "react";
 import { Route, Routes } from "react-router-dom";
 import Home from "../Content/Home";
 import { sessionstorageGet } from "../Config/Constant";
@@ -28,7 +28,7 @@ const Content = ({show}) => {
         return import('../Content/PageNotFound');
       })
     );
-  
+    
     return (
       <Suspense fallback={
         <PageLoading/>
@@ -38,19 +38,21 @@ const Content = ({show}) => {
     );
   };
 
-  const getDynamicRoutes = () => {
-    const menuReturn = dynamicContent ? dynamicContent.flatMap(menu => {
+  const dynamicRoutes = useMemo(() => {
+    return dynamicContent ? dynamicContent.flatMap(menu => {
       return [{
         path: menu.menuLink,
-        element:loadComponent(menu.menuElement)
+        element: loadComponent(menu.menuElement)
       }]
+    }) : [];
+  }, [dynamicContent]);
 
-   }) : [];
-    return menuReturn
-  };
+  const renderRoutes = () => {
+    return dynamicRoutes.map(route => (
+      <Route key={route.path} path={route.path} element={route.element} />
+    ))
+  }
 
-  const dynamicRoutes = getDynamicRoutes()
-  console.log('sowow', show)
   return (
     <div 
       className="h-100"
@@ -60,10 +62,8 @@ const Content = ({show}) => {
     >
         <Routes>
           <Route path="/" element={<Home />} />
+          {renderRoutes()}
           <Route path="*" element={<PageNotFound/>}/>
-          {dynamicRoutes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.element} />
-          ))}
         </Routes>
     </div>
   );
