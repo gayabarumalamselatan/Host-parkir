@@ -5,7 +5,7 @@ import { sessionstorageGet } from "../Config/Constant";
 import { AdminMenu, OperatorMenu } from "../Config/MenuList";
 import PageNotFound from "../Content/PageNotFound";
 import PropTypes from "prop-types";
-import PageLoading from "./PageLoading";
+import PageLoading from "../Components/PageLoading";
 
 const Content = ({show}) => {
   const [dynamicContent, setDynamicContent] = useState([]);

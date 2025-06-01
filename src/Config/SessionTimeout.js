@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 const SessionTimeout = () => {
   const navigate = useNavigate();
   const isLoggedIn = sessionStorage.getItem("isLoggedIn");
-  const sessionDuration = 300000
+  const sessionDuration = 30*60*1000
   console.log("si",isLoggedIn);
 
   useEffect(() => {

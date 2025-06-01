@@ -180,7 +180,7 @@ li.nav-item > a.nav-link:hover {
 }
 #jumbo.container-fluid {
   position: relative;
-  z-index: 999;
+  z-index: 1;
 }
 h1#jumbo {
   font-family: "Send Flowers", serif;
@@ -261,4 +261,8 @@ h1#jumbo {
 /* Custom Border Radius */
 .rounded-custom{
   border-radius: 30px;
+}
+
+.noti-overlay{
+  right: 20px;
 }

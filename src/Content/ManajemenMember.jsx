@@ -3,7 +3,7 @@ import ContentHeader from "../Layout/ContentHeader"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faCaretLeft, faCaretRight, faEdit, faRefresh, faTrash } from "@fortawesome/free-solid-svg-icons"
 import MemberService from "../Services/memberService"
-import PageLoading from "../Layout/PageLoading"
+import PageLoading from "../Components/PageLoading"
 import { Modal } from "react-bootstrap"
 import Swal from "sweetalert2"
 import { LogoutExp } from "../Services/expiredToken"
@@ -283,10 +283,6 @@ const ManajemenMember = () => {
   return (
     <Fragment>
 
-      {
-        isLoading && <PageLoading/>
-      }
-
       <div className="m-4">
 
         {/* header */}
@@ -417,117 +413,125 @@ const ManajemenMember = () => {
 
         <section className="mt-4">
           <div className="card rounded-custom border border-0 custom-shadow">
-            <div className="card-header primary-button-custom p-3 text-white fw-bold border border-0">   
-              <div className="d-flex flex-row justify-content-between">
-                <p className="m-0 ms-2">Data Member</p>
-              </div>
-            </div>
-            <div className="card-body table-responsive p-4">
-              <table className="table table-striped table-hover text-start">
-                <thead>
-                  <tr>
-                    {
-                      memberData.length === 0 ?
-                      <>
-                        <p>No data</p>
-                      </>
-                      :
-                      !isLoading?
-                      <>
-                        <th className="px-3">No</th>
-                        {headers.map((header) => (
-                          <th key={header} className="px-3 py-2">
-                            {header.replace(/_/g, ' ').toUpperCase()}
-                          </th>
-                        ))}
-                        <th>Aksi</th>
-                      </>
-                      :
-                      <>
-                        <p>
-                          Loading...
+            {
+              isLoading ? (
+                <PageLoading/>
+              ) : (
+                <>
+                  <div className="card-header primary-button-custom p-3 text-white fw-bold border border-0">   
+                    <div className="d-flex flex-row justify-content-between">
+                      <p className="m-0 ms-2">Data Member</p>
+                    </div>
+                  </div>
+                  <div className="card-body table-responsive p-4">
+                    <table className="table table-striped table-hover text-start">
+                      <thead>
+                        <tr>
+                          {
+                            memberData.length === 0 ?
+                            <>
+                              <p>No data</p>
+                            </>
+                            :
+                            !isLoading?
+                            <>
+                              <th className="px-3">No</th>
+                              {headers.map((header) => (
+                                <th key={header} className="px-3 py-2">
+                                  {header.replace(/_/g, ' ').toUpperCase()}
+                                </th>
+                              ))}
+                              <th>Aksi</th>
+                            </>
+                            :
+                            <>
+                              <p>
+                                Loading...
+                              </p>
+                            </>
+                            
+                          }
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {
+                          memberData ? 
+                          memberData.map((row, index) => (
+                            <tr key={index}>
+                              <td className="px-3">
+                              {paginationDisplay.startingIndex + index + 1}
+                              </td>
+                              {headers.map((header) => (
+                                <td key={header} className='px-3 py-2'>
+                                  {row[header] ?? "-"}
+                                </td>
+                              ))}
+                              <td>
+                                <div className="d-flex gap-2">
+        
+                                  <button 
+                                    className="btn btn-primary primary-button-custom"
+                                    onClick={() => {
+                                      setIsEditModalOpen(true)
+                                      setMemberToEdit(row)
+                                    }}  
+                                  >
+                                    <FontAwesomeIcon icon={faEdit}/>
+                                  </button>
+                                  <button 
+                                    className="btn btn-danger danger-button-custom"
+                                    onClick={() => {
+                                      handleDeleteMember(row)
+                                    }}
+                                  >
+                                    <FontAwesomeIcon icon={faTrash}/>
+                                  </button>
+        
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                          :
+                          <>
+                            <p>no</p>
+                          </>
+                        }
+                      </tbody>
+                    </table>
+
+                    <div className="d-flex flex-row justify-content-between align-items-center">
+                      <div className="text-start">
+                        <p className="m-0 primary-text-color fw-semibold">
+                          Menampilkan {paginationDisplay.start} - {paginationDisplay.end} dari {paginationData.total_members} data.
                         </p>
-                      </>
-                      
-                    }
-                  </tr>
-                </thead>
-                <tbody>
-                  {
-                    memberData ? 
-                    memberData.map((row, index) => (
-                      <tr key={index}>
-                        <td className="px-3">
-                        {paginationDisplay.startingIndex + index + 1}
-                        </td>
-                        {headers.map((header) => (
-                          <td key={header} className='px-3 py-2'>
-                            {row[header] ?? "-"}
-                          </td>
-                        ))}
-                        <td>
-                          <div className="d-flex gap-2">
-  
-                            <button 
-                              className="btn btn-primary primary-button-custom"
-                              onClick={() => {
-                                setIsEditModalOpen(true)
-                                setMemberToEdit(row)
-                              }}  
-                            >
-                              <FontAwesomeIcon icon={faEdit}/>
-                            </button>
-                            <button 
-                              className="btn btn-danger danger-button-custom"
-                              onClick={() => {
-                                handleDeleteMember(row)
-                              }}
-                            >
-                              <FontAwesomeIcon icon={faTrash}/>
-                            </button>
-  
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                    :
-                    <>
-                      <p>no</p>
-                    </>
-                  }
-                </tbody>
-              </table>
+                      </div>
+                      <div className="text-end d-flex flex-row gap-2">
 
-              <div className="d-flex flex-row justify-content-between align-items-center">
-                <div className="text-start">
-                  <p className="m-0 primary-text-color fw-semibold">
-                    Menampilkan {paginationDisplay.start} - {paginationDisplay.end} dari {paginationData.total_members} data.
-                  </p>
-                </div>
-                <div className="text-end d-flex flex-row gap-2">
+                        <button 
+                          className="btn btn-primary primary-button-custom border border-0" 
+                          onClick={() => handlePageChange(currentPage - 1)} 
+                          disabled={currentPage === 1}
+                        >
+                          <FontAwesomeIcon icon={faCaretLeft} />
+                        </button>
 
-                  <button 
-                    className="btn btn-primary primary-button-custom border border-0" 
-                    onClick={() => handlePageChange(currentPage - 1)} 
-                    disabled={currentPage === 1}
-                  >
-                    <FontAwesomeIcon icon={faCaretLeft} />
-                  </button>
+                        {renderPaginationButtons()}
 
-                  {renderPaginationButtons()}
+                        <button 
+                          className="btn btn-primary primary-button-custom border border-0" 
+                          onClick={() => handlePageChange(currentPage + 1)} 
+                          disabled={currentPage === paginationData.total_pages}
+                        >
+                          <FontAwesomeIcon icon={faCaretRight} />
+                        </button>
 
-                  <button 
-                    className="btn btn-primary primary-button-custom border border-0" 
-                    onClick={() => handlePageChange(currentPage + 1)} 
-                    disabled={currentPage === paginationData.total_pages}
-                  >
-                    <FontAwesomeIcon icon={faCaretRight} />
-                  </button>
+                      </div>
+                    </div>
 
-                </div>
-              </div>
-
-            </div>
+                  </div>
+                </>
+              )
+            }
           </div>
         </section>
 

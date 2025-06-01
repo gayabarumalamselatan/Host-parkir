@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import Charts from "../Components/Charts";
 
 const Home = () => {
   return (
@@ -10,6 +11,7 @@ const Home = () => {
           </h1>
         </div>
       </div>
+      <Charts/>
     </Fragment>
   );
 };

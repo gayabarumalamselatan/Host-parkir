@@ -43,6 +43,8 @@ const LoginPage = () => {
         sessionStorage.setItem("isLoggedIn", "true");
         sessionStorage.setItem("Role_id", response.data.roleID)
         sessionStorage.setItem("token", response.data.accessToken)
+        sessionStorage.setItem("userID", response.data.userID)
+        window.location.reload()
       }
 
       console.log(JSON.stringify(response?.data));

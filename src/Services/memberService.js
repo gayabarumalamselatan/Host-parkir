@@ -1,5 +1,5 @@
 import axios from "axios";
-import { DISABLE_MEMBER_SERVICE, MEMBER_SERVICE_BASE, PAGINATED_MEMBER_SERVICE } from "../Config/URLConstant";
+import { DISABLE_MEMBER_SERVICE, JENIS_KENDARAAN_SERVICE, MEMBER_SERVICE_BASE, PAGINATED_MEMBER_SERVICE } from "../Config/URLConstant";
 
 const accessToken = sessionStorage.getItem("token");
 const header = {
@@ -55,6 +55,15 @@ const MemberService = {
     } catch (error) {
       console.log(error);
       return error;
+    }
+  },
+
+  fetchJenisKendaraaanService: async () => {
+    try {
+      const response = await axios.get(`${JENIS_KENDARAAN_SERVICE}`);
+      return response
+    } catch (error) {
+      return error
     }
   }
 }

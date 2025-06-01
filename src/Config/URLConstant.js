@@ -11,4 +11,8 @@ export const SERVICE_BASE = import.meta.env.VITE_SERVICE_BASE
   export const PAGINATED_MEMBER_SERVICE = `${SERVICE_BASE}/member-service/paginated-member`;
   export const DISABLE_MEMBER_SERVICE = `${SERVICE_BASE}/member-service/delete-member`;
 
-  export const STRUK_SERVICE_BASE = `${SERVICE_BASE}/struk-service/struk`;
+  export const STRUK_SERVICE_BASE = `${SERVICE_BASE}/struk-service`;
+
+  export const JENIS_KENDARAAN_SERVICE = `${SERVICE_BASE}/jenis-kendaraan-service/jenis-kendaraan`
+
+  export const NOTIFICATION_SERVICE = `${SERVICE_BASE}/notification`

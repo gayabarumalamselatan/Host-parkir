@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faEye, faEyeSlash, faRefresh, faTrash, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import UserService from '../Services/userService'
 import { Modal } from 'react-bootstrap'
-import PageLoading from "../Layout/PageLoading";
+import PageLoading from "../Components/PageLoading";
 import Select from 'react-select'
 import Swal from 'sweetalert2'
 import { LogoutExp } from '../Services/expiredToken'
@@ -48,7 +48,7 @@ const ManajemenUser = () => {
         const mappedOption = response.data.data.map( item => ({
           id: item.ID,
           value: item.ID,
-          label: item.Name
+          label: item.name
         }));
   
         setRoleOptions(mappedOption);
@@ -308,10 +308,6 @@ const ManajemenUser = () => {
   return (
     <Fragment>
 
-      {
-        isLoading && <PageLoading/>
-      }
-
       <div className='m-4'>
 
         <section className='content-header'>
@@ -347,66 +343,72 @@ const ManajemenUser = () => {
         {/* Table */}
         <section className="mt-4">
           <div className="card rounded-custom border border-0 custom-shadow">
-            <div className="card-header primary-button-custom p-3 text-white fw-bold border border-0">   
-              <div className="d-flex flex-row justify-content-between">
-                <p className="m-0 ms-2">Data User</p>
-              </div>
-            </div>
-            <div className="card-body table-responsive p-4">
-              <table className="table table-striped table-hover text-start">
-                <thead>
-                  <tr>
-                    <th className="px-3">No</th>
-                    {headers.map((header) => (
-                      <th key={header} className="px-3 py-2">
-                        {header.replace(/_/g, ' ').toUpperCase()}
-                      </th>
-                    ))}
-                    <th>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {userData.map((row, index) => (
-                    <tr key={index}>
-                      <td className="px-3">
-                      {index + 1}
-                      </td>
-                      {headers.map((header) => (
-                        <td key={header} className='px-3 py-2'>
-                          {row[header] ?? "-"}
-                        </td>
-                      ))}
-                      <td>
-                        <div className="d-flex gap-2">
+            {isLoading ? (
+                <PageLoading/>
+              ) : (
+                <>
+                  <div className="card-header primary-button-custom p-3 text-white fw-bold border border-0">   
+                    <div className="d-flex flex-row justify-content-between">
+                      <p className="m-0 ms-2">Data User</p>
+                    </div>
+                  </div>
+                  <div className="card-body table-responsive p-4">
+                    <table className="table table-striped table-hover text-start">
+                      <thead>
+                        <tr>
+                          <th className="px-3">No</th>
+                          {headers.map((header) => (
+                            <th key={header} className="px-3 py-2">
+                              {header.replace(/_/g, ' ').toUpperCase()}
+                            </th>
+                          ))}
+                          <th>Aksi</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {userData.map((row, index) => (
+                          <tr key={index}>
+                            <td className="px-3">
+                            {index + 1}
+                            </td>
+                            {headers.map((header) => (
+                              <td key={header} className='px-3 py-2'>
+                                {row[header] ?? "-"}
+                              </td>
+                            ))}
+                            <td>
+                              <div className="d-flex gap-2">
 
-                          <button 
-                            onClick={(e) => {
-                              e.preventDefault()
-                              openModal(row)
-                            }}
-                            className="btn btn-primary primary-button-custom"
-                          >
-                            <FontAwesomeIcon icon={faEdit}/>
-                          </button>
-                          
-                          <button 
-                            className="btn btn-danger danger-button-custom"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              deleteUser(row)
-                            }}
-                          >
-                            <FontAwesomeIcon icon={faTrash}/>
-                          </button>
+                                <button 
+                                  onClick={(e) => {
+                                    e.preventDefault()
+                                    openModal(row)
+                                  }}
+                                  className="btn btn-primary primary-button-custom"
+                                >
+                                  <FontAwesomeIcon icon={faEdit}/>
+                                </button>
+                                
+                                <button 
+                                  className="btn btn-danger danger-button-custom"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    deleteUser(row)
+                                  }}
+                                >
+                                  <FontAwesomeIcon icon={faTrash}/>
+                                </button>
 
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-            </div>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )
+            }
           </div>
         </section>
 
