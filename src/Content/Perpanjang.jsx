@@ -120,6 +120,7 @@ const Perpanjang = () => {
         tanggal_kadaluarsa: e.tanggal_kadaluarsa,
         tarif_bulanan: e.tarif_bulanan,
         keterangan: e.keterangan,
+        total_pembayaran: e.tarif_bulanan
       })
     } else {
       setPerpanjangData(initialData)
@@ -181,12 +182,12 @@ const Perpanjang = () => {
 
       try {
         const [updateMember, createStruk, editStruk] = await Promise.all([
-          await MemberService.updateMemberService(memberDataToUpdate),
-          await StrukService.createNewStruk(strukData),
-          await StrukService.editStruk(kuponData.id, {is_kupon_used: true})
+          MemberService.updateMemberService(memberDataToUpdate),
+          StrukService.createNewStruk(strukData),
+          kuponToCheck ? StrukService.editStruk(kuponData.id, {is_kupon_used: true}) : Promise.resolve({status: 200})
         ])
         console.log("gor",MemberService, createStruk);
-        if(updateMember.status === 200 && createStruk.status === 201 && editStruk.status === 200){
+        if(updateMember.status === 200 && createStruk.status === 201 ){
           Swal.fire({
             title: "Yes, Berhasil!",
             text: "Member berhasil diperpanjang.",
@@ -201,6 +202,12 @@ const Perpanjang = () => {
           })
         } else {
           throw {updateMember, createStruk}
+        }
+
+        if(kuponToCheck){
+          if(editStruk.status !== 200){
+            throw {editStruk}
+          }
         }
       } catch (error) {
         console.error("Error adding member",error);
@@ -234,8 +241,6 @@ const Perpanjang = () => {
     // Reload scripts and styles if needed
     window.location.reload();
   };
-
-  
 
   return (
     <Fragment>
@@ -338,6 +343,7 @@ const Perpanjang = () => {
                             }}
                             value={(perpanjangData.tarif_bulanan || 0).toLocaleString('en-US')}
                           />
+
                         </div>
                         <div className="col-md-6">
                           <label className="form-label fw-semibold primary-text-color">
@@ -408,6 +414,17 @@ const Perpanjang = () => {
                                   jumlah_pembayaran: parsedValue
                                 })
                               }
+                              if(parsedValue < perpanjangData.jumlah_pembayaran){
+                                setErrors({
+                                  ...errors,
+                                  jumlah_pembayaran: "Jumlah pembayaran kurang"
+                                })
+                              } else {
+                                
+                                // eslint-disable-next-line no-unused-vars
+                                const { jumlah_pembayaran, ...restErrors } = errors;
+                                setErrors(restErrors);
+                              }
                             }}
                             value={(perpanjangData.jumlah_pembayaran || 0).toLocaleString('en-US')}
                           />
@@ -464,7 +481,14 @@ const Perpanjang = () => {
                             </button>
                           </div>
                           { kuponStatusMessage &&
-                            <p className="text-success">{kuponStatusMessage}</p>
+                            <p 
+                              className={
+                                kuponStatusMessage === "Kupon Berhasil Digunakan" ? 
+                                "text-success" : "text-danger"
+                              }
+                            >
+                              {kuponStatusMessage}
+                            </p>
                           }
                         </div>
                         <div className="col-md-6">
@@ -478,7 +502,7 @@ const Perpanjang = () => {
                             </div>
                             <div className="d-flex justify-content-between mb-2">
                               <div>Diskon:</div>
-                              <div>{kuponData.potongan_harga ? kuponData.potongan_harga : 0} %</div>
+                              <div>{kuponToCheck ? kuponData.potongan_harga : 0} %</div>
                             </div>
                             <div className="d-flex justify-content-between mb-2 fw-bold">
                               <div>Total Pembayaran:</div>
@@ -531,6 +555,22 @@ const Perpanjang = () => {
                                 }
                                 return
                               }
+                            }
+                            if(perpanjangData.jumlah_pembayaran < perpanjangData.total_pembayaran){
+                               const req = await Swal.fire({
+                                title: "Peringatan!",
+                                text: "Jumlah Pembayaran kurang.",
+                                icon: 'warning',
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'OK'
+                              });
+                              if(req.isConfirmed){
+                                setErrors({
+                                  ...errors,
+                                  jumlah_pembayaran: "Jumlah pembayaran kurang"
+                                })
+                              }
+                              return
                             }
                             setErrors({});
                             setIsPrinted(true);
