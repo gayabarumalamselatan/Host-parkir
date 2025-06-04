@@ -31,13 +31,6 @@ const Charts = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchMember = async () => {
-    const token = localStorage.getItem('token'); // adjust key if different
-    if (!token) {
-      console.error("Token not found in local storage.");
-      setLoading(false);
-      return;
-    }
-
     try {
       const response = await MemberService.fetchMemberService();
       if (response && response.data.data) {
