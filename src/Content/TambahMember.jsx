@@ -5,11 +5,12 @@ import MemberService from "../Services/memberService";
 import PageLoading from "../Components/PageLoading";
 import { LogoutExp } from "../Services/expiredToken";
 import Select from "react-select";
+import { useLocation } from "react-router-dom";
 
 const TambahMember = () => {
-
+  const location = useLocation();
   const initialMember = {
-    nomor_polisi: "",
+    nomor_polisi: location.state?.nomor_polisi || "",
     nama_pemilik: "",
     kendaraan_id: 0,
     warna_kendaraan: '',

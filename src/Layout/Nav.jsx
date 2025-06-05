@@ -4,21 +4,25 @@ import PropTypes from "prop-types";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { Modal } from "react-bootstrap";
 import { useNotification } from "../Context/NotificationProvider";
+import NotificationOverlay from "../Modals/NotificationModal/NotificationOverlay";
+import NotificationModal from "../Modals/NotificationModal/NotificationModal";
 
 
 const Nav = ({ toggleSidebar, show }) => {
   const [notifActionModalOpen, setNotifActionModalOpen] = useState(false)
   const navigate = useNavigate();
-  const { notifications} = useNotification();
+  const { notifications } = useNotification();
   const [notiCardOpen, setNotiCardOpen] = useState(false);
+  const [notificationData, setNotificationData] = useState(null)
   const overlayRef = useRef(null);
-
+  console.log('notiselect', notificationData)
   const handleLogout = () => {
     sessionStorage.clear();
     navigate("/login");
   };
+
+  const userId = sessionStorage.getItem("userID")
 
   const notificationCount = notifications.length > 10 ? '10+' : notifications.length
   console.log(notificationCount)
@@ -54,35 +58,6 @@ const Nav = ({ toggleSidebar, show }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [overlayRef]);
-
-  const NotificationOverlay = ({ notifications }) => {
-    return (
-      <div className="position-fixed card z-3 noti-overlay"  ref={overlayRef}>
-        <div className="card-body">
-          {notifications.length === 0 ? (
-            <p className="text-center p-3 mb-0">No notifications</p>
-          ) : (
-            <ul className="list-group list-group-flush">
-              {notifications.map((notif) => (
-                <li 
-                  key={notif.id}  
-                  className={`list-group-item ${notif.is_read ? '' : 'fw-bold'}`}
-                  onClick={() => setNotifActionModalOpen(!notifActionModalOpen)}
-                  style={{
-                    cursor: "pointer"
-                  }}
-                >
-                  <div>Nomor Polisi: {notif.nomor_polisi}</div>
-                  <div>Tanggal Masuk: {notif.tanggal_masuk}</div>
-                  <div>Jam Masuk: {notif.jam_masuk}</div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </div>
-    );
-  };
 
   return (
     <Fragment>
@@ -140,25 +115,32 @@ const Nav = ({ toggleSidebar, show }) => {
               {userName ? `${userName}` : ''} | Date: {currentBusinessDate}
             </span>
           </li> */}
-            <li className="nav-item me-3">
-              <button 
-                className="text-white nav-link"
-                onClick={() => setNotiCardOpen(!notiCardOpen)}  
-              >
-                <FontAwesomeIcon icon={faBell}/>
-                {notifications.length > 0 && (
-                  <span className="top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    {notificationCount}
-                  </span>
+          {
+            userId === "2" && (
+              <li className="nav-item me-3">
+                <button 
+                  className="text-white nav-link"
+                  onClick={() => setNotiCardOpen(!notiCardOpen)}  
+                >
+                  <FontAwesomeIcon icon={faBell}/>
+                  {notifications.length > 0 && (
+                    <span className="top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                      {notificationCount}
+                    </span>
+                  )}
+                </button>
+                {notiCardOpen && (
+                  <NotificationOverlay
+                    notifications={notifications} 
+                    onClose={() => setNotiCardOpen(false)} 
+                    setNotifActionModalOpen={setNotifActionModalOpen}
+                    notifActionModalOpen={notifActionModalOpen}
+                    setNotificationData={setNotificationData}
+                  />
                 )}
-              </button>
-               {notiCardOpen && (
-                <NotificationOverlay 
-                  notifications={notifications} 
-                  onClose={() => setNotiCardOpen(false)} 
-                />
-              )}
-            </li> 
+              </li> 
+            )
+          }
             <li className="nav-item">
               <a
                 className="nav-link"
@@ -172,11 +154,16 @@ const Nav = ({ toggleSidebar, show }) => {
           </ul>
         </div>
       </nav>
-      <Modal show={notifActionModalOpen} onHide={() => setNotifActionModalOpen(!notifActionModalOpen)}>
-        <Modal.Header>
-          TEST
-        </Modal.Header>
-      </Modal>
+      {
+        notificationData && notifActionModalOpen && (
+          <NotificationModal
+          notifActionModalOpen={notifActionModalOpen}
+          setNotifActionModalOpen={setNotifActionModalOpen}
+          notificationData={notificationData}
+        />
+        )
+      }
+      
     </Fragment>
   );
 };

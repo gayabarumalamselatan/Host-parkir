@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import Charts from "../Components/Charts";
 
 const Home = () => {
+
   return (
     <Fragment>
       <div className="p-5 mb-4 jumbotron-bg">
@@ -11,7 +12,9 @@ const Home = () => {
           </h1>
         </div>
       </div>
-      <Charts/>
+      <div className="mt-5">
+        <Charts/>
+      </div>
     </Fragment>
   );
 };

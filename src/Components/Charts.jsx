@@ -114,66 +114,68 @@ const Charts = () => {
   return (
     <>
       {barChartData.labels && barChartData.labels.length > 0 && (
-        <div className='d-flex flex-row w-100'>
-          <div>
-            <h2>Members Added Per Day</h2>
-            <div className='mx-3 mb-5'>
-              <Bar
-                data={barChartData}
-                options={{
-                  scales: {
-                    y: {
-                      beginAtZero: true,
-                      title: {
-                        display: true,
-                        text: 'Number of Members'
+        <div className="container mt-4">
+          <div className="row">
+            <div className="col-md-6 mb-4">
+              <h2>Members Added Per Day</h2>
+              <div className="chart-container">
+                <Bar
+                  data={barChartData}
+                  options={{
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        title: {
+                          display: true,
+                          text: 'Number of Members'
+                        }
+                      },
+                      x: {
+                        title: {
+                          display: true,
+                          text: 'Date'
+                        }
                       }
                     },
-                    x: {
-                      title: {
-                        display: true,
-                        text: 'Date'
-                      }
-                    }
-                  },
-                  responsive: true,
-                  plugins: {
-                    legend: { position: 'top' },
-                    title: { display: false },
-                  },
-                }}
-              />
+                    responsive: true,
+                    plugins: {
+                      legend: { position: 'top' },
+                      title: { display: false },
+                    },
+                  }}
+                />
+              </div>
             </div>
-          </div>
 
-          <div>
-            <h2>Total Tarif Bulanan Per Day</h2>
-            <div className=' mx-3'>
-              <Line
-                data={lineChartData}
-                options={{
-                  scales: {
-                    y: {
-                      beginAtZero: true,
-                      title: {
-                        display: true,
-                        text: 'Total Tarif Bulanan'
+            <div className="col-md-6 mb-4">
+              <h2>Total Tarif Bulanan Per Day</h2>
+              <div className="chart-container">
+                <Line
+                  data={lineChartData}
+                  options={{
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        title: {
+                          display: true,
+                          text: 'Total Tarif Bulanan'
+                        }
+                      },
+                      x: {
+                        title: {
+                          display: true,
+                          text: 'Date'
+                        }
                       }
                     },
-                    x: {
-                      title: {
-                        display: true,
-                        text: 'Date'
-                      }
-                    }
-                  },
-                  responsive: true,
-                  plugins: {
-                    legend: { position: 'top' },
-                    title: { display: false },
-                  },
-                }}
-              />
+                    responsive: true,
+                    plugins: {
+                      legend: { position: 'top' },
+                      title: { display: false },
+                    },
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -183,4 +185,3 @@ const Charts = () => {
 };
 
 export default Charts;
-
