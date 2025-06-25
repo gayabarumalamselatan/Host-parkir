@@ -755,13 +755,18 @@ const ManajemenUser = () => {
             className='btn btn-primary primary-button-custom rounded-4'
             onClick={closeModal}
           >
-            Close
+            Tutup
           </button>
           <button
             className='btn btn-primary primary-button-custom rounded-4'
             onClick={userSender}
           >
-            Save Changes
+            {
+              isEdit ? 
+              "Simpan Perubahan"
+              :
+              "Tambahkan User"
+            }
           </button>
         </Modal.Footer>
       </Modal>

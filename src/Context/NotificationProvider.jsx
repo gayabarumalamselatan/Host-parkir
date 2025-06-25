@@ -65,6 +65,7 @@ export const NotificationProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    // Cuma jalan di lokal
     const socket = new WebSocket(`${NOTIFICATION_SERVICE}/ws`);
 
     socket.onmessage = (event) => {

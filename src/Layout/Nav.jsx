@@ -29,14 +29,15 @@ const Nav = ({ toggleSidebar, show }) => {
 
   const showLogoutConfirm = () => {
     Swal.fire({
-      title: "Confirmation",
-      text: "Are you sure you want to logout?",
+      title: "Konfirmasi",
+      text: "Anda Yakin Ingin Log Out?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "warning",
-      cancelButtonColor: "grey",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
       confirmButtonText: "Logout",
-      cancelButtonText: "Cancel",
+      cancelButtonText: "Batal",
+      reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
         handleLogout();

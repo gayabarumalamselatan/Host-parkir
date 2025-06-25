@@ -136,6 +136,12 @@ const TambahMember = () => {
         console.log("error", error)
         if (error.response.data.message === "Token is expired") {
          LogoutExp();
+        } else if(error.response.data.error === "Nopol is already exists"){
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Plat nomor sudah terdaftar!"
+          })
         } else {
           Swal.fire({
               icon: "error",
@@ -178,7 +184,7 @@ const TambahMember = () => {
                         onChange={(e)=> {
                           setMemberToCreate({
                             ...memberToCreate,
-                            nomor_polisi: e.target.value
+                            nomor_polisi: e.target.value.toUpperCase()
                           })
                         }}
                       />

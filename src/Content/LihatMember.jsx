@@ -14,6 +14,7 @@ const LihatMember = () => {
   const [paginationData, setPaginationData] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(5);
+  const [selecedLimit, setSelectedLimit] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [nopolSearch, setNopolSearch] = useState("")
   const [paginationDisplay, setPaginationDisplay] = useState({
@@ -21,6 +22,7 @@ const LihatMember = () => {
     end: 0,
     startingIndex: 0,
   })
+
   
   const calculateDisplayRange = (currentPage, limit, totalMembers ) => {
     const start = (currentPage - 1) * limit + 1;
@@ -73,7 +75,7 @@ const LihatMember = () => {
 
   useEffect(() => {
     fetchMember(currentPage, limit);
-  },[]);
+  },[limit, currentPage]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -170,7 +172,7 @@ const LihatMember = () => {
                     className="form-control"
                     placeholder="Masukkan Nomor Polisi"
                     value={nopolSearch}
-                    onChange={(e) => setNopolSearch(e.target.value  )}
+                    onChange={(e) => setNopolSearch(e.target.value.toUpperCase())}
                   />
                 </div>
                 <div className="col-md-6 text-end">
@@ -199,17 +201,25 @@ const LihatMember = () => {
                       <div className="d-flex me-2 gap-2">
                         <p className="m-0">Limit:</p>
                         <select
-                          onClick={(e)=>{
-                            const parsedLimit = parseInt(e.target.value, 10);
-                            setLimit(parsedLimit);
-                            setCurrentPage(1);
-                            fetchMember(1, parsedLimit)
+                          onChange={(e) => {
+                            setSelectedLimit(e.target.value)
                           }}
+                          value={selecedLimit}
                         >
                           <option value={5}>5</option>
                           <option value={10}>10</option>
                           <option value={20}>20</option>
                         </select>
+                        <button 
+                          className="btn btn-primary secondary-button-custom"
+                          onClick={()=>{
+                            const parsedLimit = parseInt(selecedLimit, 10);
+                            setLimit(parsedLimit);
+                            setCurrentPage(1);
+                          }}
+                        >
+                          Set Limit
+                        </button>
                       </div>
                     </div>
                   </div>

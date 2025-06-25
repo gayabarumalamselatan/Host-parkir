@@ -117,7 +117,7 @@ const Charts = () => {
         <div className="container mt-4">
           <div className="row">
             <div className="col-md-6 mb-4">
-              <h2>Members Added Per Day</h2>
+              <h2>Member Baru Perhari</h2>
               <div className="chart-container">
                 <Bar
                   data={barChartData}
@@ -148,7 +148,7 @@ const Charts = () => {
             </div>
 
             <div className="col-md-6 mb-4">
-              <h2>Total Tarif Bulanan Per Day</h2>
+              <h2>Total Tarif Bulanan</h2>
               <div className="chart-container">
                 <Line
                   data={lineChartData}

@@ -392,13 +392,13 @@ const ManajemenMember = () => {
                       }}    
                       className="btn btn-primary primary-button-custom rounded-4 me-2 px-4"
                     >
-                      Clear
+                      Reset
                     </button>
                     <button 
                       className="btn btn-primary primary-button-custom rounded-4 px-4"
                       onClick={() => fetchMember(1, limit, filterQuery)}
                     >
-                      Search
+                      Filter
                     </button>
                   </div>
                  

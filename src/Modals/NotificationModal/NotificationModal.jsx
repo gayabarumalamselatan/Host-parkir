@@ -29,9 +29,9 @@ const NotificationModal = ({
           icon: 'success',
           confirmButtonText: "OK"
         })
-      } else{
+      } else {
         throw logResponse, notificationResponse
-      }
+      } 
     } catch (error) {
       console.error(error)
       Swal.fire({
@@ -39,6 +39,8 @@ const NotificationModal = ({
         title: "Oops...",
         text: "Ada yang salah nih!"
       });
+    } finally {
+      setNotifActionModalOpen(false)
     }
   }
 
